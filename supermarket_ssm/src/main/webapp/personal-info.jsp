@@ -142,6 +142,12 @@
 				email : $("#email").val(),
 				phone : $("#phone").val()
 			};
+
+			if (!(/^1[34578]\d{9}$/.test(message.phone))) {
+				alert("手机号码有误，请重填");
+				return false;
+			}
+
 			$.ajax({
 				type : "post",
 				url : "personalInfo.action",
