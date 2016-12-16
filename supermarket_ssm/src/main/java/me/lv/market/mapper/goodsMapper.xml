@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper    
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"    
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="me.lv.market.dao.GoodsDao">
+	<resultMap type="me.lv.market.pojo.Goods" id="goodsResultMap">
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="name" property="name" jdbcType="VARCHAR" />
+		<result column="url" property="url" jdbcType="VARCHAR" />
+		<result column="price" property="price" javaType="double" />
+		<result column="discount" property="discount" javaType="double" />
+		<result column="creat_date" property="creatDate" javaType="java.util.Date" />
+		<result column="expiry_date" property="expiryDate" jdbcType="INTEGER" />
+		<result column="producer" property="producer" jdbcType="VARCHAR" />
+		<result column="desc" property="desc" jdbcType="VARCHAR" />
+		<result column="size" property="size" jdbcType="VARCHAR" />
+		<result column="isdelete" property="isdelete" jdbcType="VARCHAR" />
+		<association property="goodsType" column="goods_type_id"
+			javaType="me.lv.market.pojo.GoodsType" select="me.lv.market.dao.GoodsTypeDao.getGoodsTypeById" />
+		<association property="goodsSum" column="id"
+			javaType="me.lv.market.pojo.GoodsSum" select="getGoodsSumById" />
+	</resultMap>
+
+	<sql id="goodsItems">
+		id, name, url, price, discount,
+		date_format(create_date,'%Y-%m-%d') as 'creatDate', expiry_date,
+		producer, `desc`, isdelete, goods_type_id, size
+	</sql>
+
+	<select id="selectGoods" resultMap="goodsResultMap">
+		select
+		<include refid="goodsItems" />
+		from `goods` where isdelete = 'N'
+	</select>
+
+	<select id="getGoodsById" resultMap="goodsResultMap"
+		parameterType="int">
+		select
+		<include refid="goodsItems" />
+		from `goods` where id = #{id} and isdelete = 'N'
+	</select>
+
+	<select id="getGoodsByName" resultMap="goodsResultMap"
+		parameterType="java.lang.String">
+		select
+		<include refid="goodsItems" />
+		from `goods` where name = #{name} and isdelete = 'N'
+	</select>
+
+	<select id="getGoodsSumById" parameterType="int"
+		resultType="me.lv.market.pojo.GoodsSum">
+		select id, goods_id, sum from `goods_sum` where goods_id =
+		#{id}
+	</select>
+
+	<update id="updateGoods" parameterType="me.lv.market.pojo.Goods">
+		update `goods` set price
+		= #{price}, discount = #{discount}, size = #{size} where id = #{id}
+	</update>
+
+	<update id="deleteGoodsById" parameterType="int">
+		update `goods` set
+		isdelete = 'Y' where id = #{id}
+	</update>
+
+	<insert id="insertGoods" parameterType="me.lv.market.pojo.Goods">
+		insert into `goods`
+		(name, price, discount, create_date, expiry_date, size, producer,
+		goods_type_id) values(#{name}, #{price}, #{discount}, #{creatDate},
+		#{expiryDate}, #{size}, #{producer}, #{goodsType.id})
+	</insert>
+
+</mapper>

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper    
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"    
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="me.lv.market.dao.OrderItemsDao">
+	<resultMap type="me.lv.market.pojo.OrderItems" id="orderItemsResultMap">
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="sum" property="sum" jdbcType="VARCHAR" />
+		<association property="goods" column="goods_id"
+			javaType="me.lv.market.pojo.Goods" select="me.lv.market.dao.GoodsDao.getGoodsById" />
+	</resultMap>
+
+	<sql id="orderItems">
+		id, sum, goods_id, order_id
+	</sql>
+
+	<select id="selectOrderItems" resultMap="orderItemsResultMap">
+		select
+		<include refid="orderItems" />
+		from `order_items`
+	</select>
+
+</mapper>

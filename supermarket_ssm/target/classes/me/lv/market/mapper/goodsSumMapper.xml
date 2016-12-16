@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper    
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"    
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="me.lv.market.dao.GoodsSumDao">
+	<resultMap type="me.lv.market.pojo.GoodsSum" id="goodsSumResultMap">
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="sum" property="sum" jdbcType="INTEGER" />
+		<association property="goods" column="goods_id"
+			javaType="me.lv.market.pojo.Goods" select="me.lv.market.dao.GoodsDao.getGoodsById" />
+	</resultMap>
+
+	<select id="getGoodsSumById" resultMap="goodsSumResultMap"
+		parameterType="int">
+		select id, goods_id, sum from `goods_sum` where goods_id
+		= #{id}
+	</select>
+
+	<update id="updateGoodsSum" parameterType="me.lv.market.pojo.GoodsSum">
+		update `goods_sum` set
+		sum = #{sum} where goods_id = #{goods.id}
+	</update>
+
+	<insert id="insertSum" parameterType="me.lv.market.pojo.GoodsSum">
+		insert into `goods_sum`
+		(sum, goods_id) values(#{sum}, #{goods.id})
+	</insert>
+
+</mapper>

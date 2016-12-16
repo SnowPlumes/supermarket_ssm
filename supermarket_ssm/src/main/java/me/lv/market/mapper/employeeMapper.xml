@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper    
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"    
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="me.lv.market.dao.EmployeeDao">
+	<resultMap type="me.lv.market.pojo.Employee" id="employeeResultMap">
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="eID" property="eID" jdbcType="VARCHAR" />
+		<result column="name" property="name" jdbcType="VARCHAR" />
+		<result column="phone" property="phone" jdbcType="VARCHAR" />
+		<result column="email" property="email" jdbcType="VARCHAR" />
+		<result column="password" property="password" jdbcType="VARCHAR" />
+		<result column="isdelete" property="isDelete" jdbcType="VARCHAR" />
+		<association column="employee_limit_id" property="employeeLimit"
+			javaType="me.lv.market.pojo.EmployeeLimit" select="getLimitById" />
+	</resultMap>
+
+
+	<sql id="employeeItems">
+		id, eID, name, phone, email, password, isdelete,
+		employee_limit_id
+	</sql>
+
+	<select id="selectEmployees" resultMap="employeeResultMap">
+		select
+		<include refid="employeeItems" />
+		from `employee` where isdelete = 'N'
+	</select>
+
+	<select id="getLimitById" resultType="me.lv.market.pojo.EmployeeLimit"
+		parameterType="int">
+		select id, level from employee_limit where id = #{id}
+	</select>
+
+	<select id="getEmployeeById" resultMap="employeeResultMap"
+		parameterType="java.lang.String">
+		select
+		<include refid="employeeItems" />
+		from `employee` where eID = #{eID} and isdelete = 'N'
+	</select>
+
+	<insert id="insertEmployee" parameterType="me.lv.market.pojo.Employee">
+		insert into `employee`
+		(eID, name, phone, email, employee_limit_id)
+		values(#{eID},
+		#{name},#{phone}, #{email}, #{employeeLimit.id})
+	</insert>
+
+	<update id="updateEmployee" parameterType="me.lv.market.pojo.Employee">
+		update `employee`
+		<set>
+			<if test="eID != null">
+				eID = #{eID},
+			</if>
+			<if test="name != null">
+				name = #{name},
+			</if>
+			<if test="phone != null">
+				phone = #{phone},
+			</if>
+			<if test="email != null">
+				email = #{email},
+			</if>
+			<if test="employeeLimit != null">
+				employee_limit_id = #{employeeLimit.id},
+			</if>
+			<if test="password != null">
+				password = #{password},
+			</if>
+			<if test="isdelete != null">
+				isdelete = #{isdelete},
+			</if>
+		</set>
+		where id = #{id}
+	</update>
+
+
+</mapper>
